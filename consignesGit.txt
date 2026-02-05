@@ -1,0 +1,9 @@
+1 - Ouvrir un terminal dans mon dossier de travail habituel.
+2 - Taper : git clone https://github.com/MaelMIOSSEC/SystemeObjetRepartie.git
+3 - Exécuter npm install pour récupérer les fichiers du dossier node_module.
+
+Pour chaque modification, à la racine du projet : 
+	1 - git status
+	2 - git add .
+	3 - git commit -m "message du commit"
+	4 - git push
