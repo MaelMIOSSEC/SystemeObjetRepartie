@@ -26,6 +26,27 @@ export interface PollRow {
   [key: string]: SQLOutputValue;
 }
 
+export function isPollRow(obj: Record<string, SQLOutputValue>): obj is PollRow {
+  return (
+    "poll_id" in obj &&
+    typeof obj.poll_id === "string" &&
+    "title" in obj &&
+    typeof obj.title === "string" &&
+    "description" in obj &&
+    (typeof obj.description === "string" || obj.description === null) &&
+    "creation_date" in obj &&
+    typeof obj.creation_date === "string" &&
+    "expiration_date" in obj &&
+    (typeof obj.expiration_date === "string" || obj.expiration_date === null) &&
+    "status" in obj &&
+    typeof obj.status === "string" &&
+    "user_id" in obj &&
+    typeof obj.user_id == "string" &&
+    "superpoll_id" in obj &&
+    typeof obj.superpoll_id === "string"
+  );
+}
+
 // ---------- API: Option --------------------------
 
 export interface Option {
@@ -43,6 +64,24 @@ export interface OptionRow {
   vote_count: number;
   poll_id: string;
   [key: string]: SQLOutputValue;
+}
+
+export function isOptionRow(
+  obj: Record<string | number, SQLOutputValue>
+): obj is OptionRow {
+  return (
+    "option_id" in obj &&
+    typeof obj.option_id === "string" &&
+    "descriptive_text" in obj &&
+    (typeof obj.descriptive_text === "string" ||
+      obj.descriptive_text === null) &&
+    "creation_date" in obj &&
+    typeof obj.creation_date === "string" &&
+    "vote_count" in obj &&
+    (typeof obj.vote_count === "number" || obj.vote_count === null) &&
+    "poll_id" in obj &&
+    typeof obj.poll_id === "string"
+  );
 }
 
 // ---------- API: Authentication / Users ----------------
@@ -66,6 +105,23 @@ export interface UserRow {
   [key: string]: SQLOutputValue;
 }
 
+export function isUserRow(obj: Record<string, SQLOutputValue>): obj is UserRow {
+  return (
+    "user_id" in obj &&
+    typeof obj.user_id === "string" &&
+    "name" in obj &&
+    obj.name === "string" &&
+    "last_name" in obj &&
+    obj.last_name === "string" &&
+    "password" in obj &&
+    obj.password === "string" &&
+    "email" in obj &&
+    obj.email === "string" &&
+    "role" in obj &&
+    obj.role === "string"
+  );
+}
+
 // ---------- API: Voting --------------------------------
 
 export interface Vote {
@@ -81,6 +137,19 @@ export interface VoteRow {
   user_id: string;
   option_id: string;
   [key: string]: SQLOutputValue;
+}
+
+export function isVoteRow(obj: Record<string, SQLOutputValue>): obj is VoteRow {
+  return (
+    "vote_id" in obj &&
+    typeof obj.vote_id === "string" &&
+    "creation_date" in obj &&
+    typeof obj.creation_date === "string" &&
+    "user_id" in obj &&
+    typeof obj.user_id === "string" &&
+    "option_id" in obj &&
+    typeof obj.option_id === "string"
+  );
 }
 
 // ---------- API: Response ------------------------------

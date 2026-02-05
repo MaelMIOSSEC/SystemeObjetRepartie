@@ -1,9 +1,13 @@
 import { Router, context } from "@oak/oak";
+import { DatabaseSync } from "node:sqlite";
 import {
-  DatabaseSync
-} from "node:sqlite";
-import { isPollRow, isOptionRow, pollRowToApi } from "../main.ts";
-import { Poll, ApiResponse, ApiErrorCode } from "../types.ts";
+  Poll,
+  ApiResponse,
+  ApiErrorCode,
+  isPollRow,
+  isOptionRow,
+} from "../types.ts";
+import { pollRowToApi } from "../mappers/mappers.ts";
 
 // const db = new Database("polls.db");
 const db = new DatabaseSync("polls.db");
@@ -136,11 +140,11 @@ router.post("/", (ctx: context) => {
     }
 
     const pollRow = db
-    .prepare(
-      `SELECT poll_id, title, description, creation_date, expiration_date, status, user_id, superpoll_id
+      .prepare(
+        `SELECT poll_id, title, description, creation_date, expiration_date, status, user_id, superpoll_id
     FROM polls WHERE poll_id = ?;`
-    )
-    .get(pollId);
+      )
+      .get(pollId);
 
     if (!pollRow || !isPollRow(pollRow)) {
       const response: ApiResponse<Poll> = {
@@ -197,11 +201,11 @@ router.put("/:pollId", (ctx: context) => {
     }
 
     const pollRow = db
-    .prepare(
-      `SELECT poll_id, title, description, creation_date, expiration_date, status, user_id, superpoll_id
+      .prepare(
+        `SELECT poll_id, title, description, creation_date, expiration_date, status, user_id, superpoll_id
     FROM polls WHERE poll_id = ?;`
-    )
-    .get(pollId);
+      )
+      .get(pollId);
 
     if (!pollRow || !isPollRow(pollRow)) {
       const response: ApiResponse<Poll> = {
@@ -256,11 +260,11 @@ router.delete("/:pollId", (ctx: context) => {
     }
 
     const pollRow = db
-    .prepare(
-      `SELECT poll_id, title, description, creation_date, expiration_date, status, user_id, superpoll_id
+      .prepare(
+        `SELECT poll_id, title, description, creation_date, expiration_date, status, user_id, superpoll_id
     FROM polls WHERE poll_id = ?;`
-    )
-    .get(pollId);
+      )
+      .get(pollId);
 
     if (!pollRow) {
       const response: ApiResponse<Poll> = {

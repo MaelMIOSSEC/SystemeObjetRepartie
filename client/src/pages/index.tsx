@@ -10,13 +10,15 @@ export default function Index() {
                 const response = await fetch("http://localhost:8000/polls")
                 
                 const data = await response.json();
-                
-                setPolls(data);
+
+                setPolls(data.data);
             } catch (err) {
                 console.error("Échec de la récupération : ", err);
             }
         })();
     }, []);
+
+    console.log(polls);
 
     return (
         <main id="content">
@@ -24,7 +26,7 @@ export default function Index() {
             <p>Click on a poll below to participate.</p>
 
             <ul>
-                {polls.map((poll) => 
+                {Array.isArray(polls) && polls.map((poll) => 
                     <>
                         <li>Titre et numéro du sondage : { poll.title } - { poll.pollId } </li>
                         <ul>
@@ -34,7 +36,7 @@ export default function Index() {
                             <li>Statut : { poll.status }</li>
                             <li>Identifiant de l'utilisateur : { poll.userId === null ? "Aucun utilisateur associé à ce sondage" : poll.userId }</li>
                             <li>Options : { 
-                                poll.options.map(option => 
+                                poll.options?.map(option => 
                                     <ul>
                                         <li>Date de création de l'option : { option.creationDate } </li>
                                         <li>Description de l'option : { option.descriptiveText === null ? "Aucune description liée à cette option" : option.descriptiveText} </li>
