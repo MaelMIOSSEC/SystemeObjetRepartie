@@ -11,8 +11,6 @@ export default function Index() {
 
         const data = await response.json();
 
-        console.log("data => ", data);
-
         setPolls(data.data);
       } catch (err) {
         console.error("Échec de la récupération : ", err);
