@@ -7,7 +7,7 @@ import {
   isPollRow,
   isOptionRow,
 } from "../types.ts";
-import { pollRowToApi } from "../mappers/mappers.ts";
+import { pollRowToApi, optionRowToApi } from "../mappers/mappers.ts";
 
 // const db = new Database("polls.db");
 const db = new DatabaseSync("polls.db");
@@ -19,30 +19,37 @@ router.get("/", (ctx: context) => {
   const pollRows = db
     .prepare(
       `SELECT poll_id, title, description, creation_date, expiration_date, status, user_id, superpoll_id
-    FROM polls;`
+       FROM polls;`
     )
     .all();
 
-  for (let i = 0; i < pollRows.length; i++) {
-    if (!pollRows[i] || !isPollRow(pollRows[i])) {
-      const response: ApiResponse<Poll[]> = {
-        success: false,
-        error: {
-          code: ApiErrorCode.NOT_FOUND,
-          message: "poll " + i + " not found.",
-        },
-      };
+  const pollsApi: Poll[] = [];
 
-      ctx.response.status = 500;
-      ctx.response.body = response;
-      return;
+  for (const row of pollRows) {
+    if (!isPollRow(row)) {
+      console.warn("Ligne de sondage invalide ignorée", row);
+      continue;
     }
+
+    const optionRows = db
+      .prepare(
+        `SELECT option_id, descriptive_text, creation_date, vote_count, poll_id 
+         FROM options 
+         WHERE poll_id = ?;`
+      )
+      .all(row.poll_id);
+
+    const validOptions = optionRows.filter(isOptionRow);
+
+    const pollApi = pollRowToApi(row, validOptions);
+
+    pollsApi.push(pollApi);
   }
 
   ctx.response.status = 200;
   ctx.response.body = {
     success: true,
-    data: pollRows,
+    data: pollsApi,
   };
 });
 
