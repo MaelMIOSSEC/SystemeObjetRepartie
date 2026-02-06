@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import type { Poll } from "../../types.ts";
+import type { PollRow } from "../../types.ts";
+import { pollRowToApi } from "../../mappers.ts";
 
 export default function Index() {
-    const[polls, setPolls] = useState<Poll[]>([]);
+    const[polls, setPolls] = useState<PollRow[]>([]);
 
     useEffect(() => {
         (async() => {
@@ -11,6 +12,8 @@ export default function Index() {
                 
                 const data = await response.json();
 
+                console.log("data =>", data)
+
                 setPolls(data.data);
             } catch (err) {
                 console.error("Échec de la récupération : ", err);
@@ -18,7 +21,7 @@ export default function Index() {
         })();
     }, []);
 
-    console.log(polls);
+    const cleanPolls = polls.map(row => pollRowToApi(row));
 
     return (
         <main id="content">
@@ -26,7 +29,7 @@ export default function Index() {
             <p>Click on a poll below to participate.</p>
 
             <ul>
-                {Array.isArray(polls) && polls.map((poll) => 
+                {Array.isArray(cleanPolls) && cleanPolls.map((poll) => 
                     <>
                         <li>Titre et numéro du sondage : { poll.title } - { poll.pollId } </li>
                         <ul>
