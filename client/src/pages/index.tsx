@@ -3,7 +3,6 @@ import type { PollRow, Option } from "../../types.ts";
 
 export default function Index() {
   const [polls, setPolls] = useState<PollRow[]>([]);
-  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -11,6 +10,8 @@ export default function Index() {
         const response = await fetch("http://localhost:8000/polls");
 
         const data = await response.json();
+
+        console.log(data);
 
         setPolls(data.data);
       } catch (err) {
@@ -90,8 +91,9 @@ export default function Index() {
                     <div style={styles.metaValue}>
                       <p style={styles.metaLabel}>⏳ Expiration</p>
                       <p>
-                        {poll.expirationDate === null
-                          ? "Aucune"
+                        {poll.expirationDate === null ||
+                        poll.expirationDate === undefined
+                          ? "non renseignée"
                           : new Date(poll.expirationDate).toLocaleDateString()}
                       </p>
                     </div>
