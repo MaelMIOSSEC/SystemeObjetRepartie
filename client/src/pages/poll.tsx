@@ -26,7 +26,7 @@ export default function Poll() {
 
         const data = await response.json();
 
-        setPoll(data);
+        setPoll(data.data);
       } catch (err) {
         console.error("Échec de la récupération : ", err);
       }
@@ -34,6 +34,8 @@ export default function Poll() {
   }, [selectedPoll]);
 
   if (!poll || !isPollRow(poll)) {
+    console.log("poll => ", poll);
+    console.log("isPollRow(poll) => ", isPollRow(poll));
     return <p>Chargement du sondage...</p>;
   }
 

@@ -7,6 +7,7 @@ import {
   isPollRow,
   isOptionRow,
 } from "../types.ts";
+// import { middlewareError } from "../middlewares/middlewareError.ts";
 import { pollRowToApi, optionRowToApi } from "../mappers/mappers.ts";
 
 // const db = new Database("polls.db");
@@ -19,7 +20,7 @@ router.get("/", (ctx: context) => {
   const pollRows = db
     .prepare(
       `SELECT poll_id, title, description, creation_date, expiration_date, status, user_id, superpoll_id
-       FROM polls;`
+       FROM polls;`,
     )
     .all();
 
@@ -35,7 +36,7 @@ router.get("/", (ctx: context) => {
       .prepare(
         `SELECT option_id, descriptive_text, creation_date, vote_count, poll_id 
          FROM options 
-         WHERE poll_id = ?;`
+         WHERE poll_id = ?;`,
       )
       .all(row.poll_id);
 
@@ -60,7 +61,7 @@ router.get("/:pollId", (ctx: context) => {
   const pollRow = db
     .prepare(
       `SELECT poll_id, title, description, creation_date, expiration_date, status, user_id, superpoll_id
-    FROM polls WHERE poll_id = ?;`
+    FROM polls WHERE poll_id = ?;`,
     )
     .get(pollId);
 
@@ -78,7 +79,7 @@ router.get("/:pollId", (ctx: context) => {
 
   const optionRows = db
     .prepare(
-      `SELECT option_id, descriptive_text, creation_date, vote_count, poll_id FROM options WHERE poll_id = ?;`
+      `SELECT option_id, descriptive_text, creation_date, vote_count, poll_id FROM options WHERE poll_id = ?;`,
     )
     .all(pollId);
 
@@ -119,7 +120,7 @@ router.post("/", (ctx: context) => {
 
     const insertResult = db
       .prepare(
-        `INSERT INTO polls (poll_id, title, description, creation_date, status, user_id, superpoll_id) VALUES (:pollId, :title, :description, :createdAt, :status, :userId, :superpollId)`
+        `INSERT INTO polls (poll_id, title, description, creation_date, status, user_id, superpoll_id) VALUES (:pollId, :title, :description, :createdAt, :status, :userId, :superpollId)`,
       )
       .run({
         pollId: pollId,
@@ -149,7 +150,7 @@ router.post("/", (ctx: context) => {
     const pollRow = db
       .prepare(
         `SELECT poll_id, title, description, creation_date, expiration_date, status, user_id, superpoll_id
-    FROM polls WHERE poll_id = ?;`
+    FROM polls WHERE poll_id = ?;`,
       )
       .get(pollId);
 
@@ -210,7 +211,7 @@ router.put("/:pollId", (ctx: context) => {
     const pollRow = db
       .prepare(
         `SELECT poll_id, title, description, creation_date, expiration_date, status, user_id, superpoll_id
-    FROM polls WHERE poll_id = ?;`
+    FROM polls WHERE poll_id = ?;`,
       )
       .get(pollId);
 
@@ -269,7 +270,7 @@ router.delete("/:pollId", (ctx: context) => {
     const pollRow = db
       .prepare(
         `SELECT poll_id, title, description, creation_date, expiration_date, status, user_id, superpoll_id
-    FROM polls WHERE poll_id = ?;`
+    FROM polls WHERE poll_id = ?;`,
       )
       .get(pollId);
 
