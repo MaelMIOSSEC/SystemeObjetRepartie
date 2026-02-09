@@ -7,8 +7,8 @@ import {
   isPollRow,
   isOptionRow,
 } from "../types.ts";
-// import { middlewareError } from "../middlewares/middlewareError.ts";
-import { pollRowToApi, optionRowToApi } from "../mappers/mappers.ts";
+import { errorMiddleware, entropyMiddleware } from "../middlewares/middlewareError.ts";
+import { pollRowToApi } from "../mappers/mappers.ts";
 
 // const db = new Database("polls.db");
 const db = new DatabaseSync("polls.db");
@@ -16,7 +16,7 @@ const db = new DatabaseSync("polls.db");
 const router = new Router({ prefix: "/polls" });
 
 // Obtenir la liste des sondages
-router.get("/", (ctx: context) => {
+router.get("/", errorMiddleware, entropyMiddleware, (ctx: context) => {
   const pollRows = db
     .prepare(
       `SELECT poll_id, title, description, creation_date, expiration_date, status, user_id, superpoll_id
@@ -55,7 +55,7 @@ router.get("/", (ctx: context) => {
 });
 
 // Obtenir un sondage unique
-router.get("/:pollId", (ctx: context) => {
+router.get("/:pollId", errorMiddleware, entropyMiddleware , (ctx: context) => {
   const pollId = ctx.params.pollId;
 
   const pollRow = db

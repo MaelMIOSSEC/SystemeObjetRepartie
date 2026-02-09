@@ -114,6 +114,12 @@ export default function Index() {
     })();
   }, []);
 
+  if (!polls) {
+    return (
+      <h1><b>Chargement de la page...</b></h1>
+    );
+  }
+
   return (
     <main id="content">
       <h1>📊 Real-time polls</h1>
