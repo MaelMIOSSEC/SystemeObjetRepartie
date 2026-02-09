@@ -1,12 +1,12 @@
 import { Router, context } from "@oak/oak";
 import { DatabaseSync } from "node:sqlite";
 import {
-  Poll,
   ApiResponse,
   ApiErrorCode,
-  isPollRow,
-  isOptionRow,
-} from "../types.ts";
+  APIException,
+} from "../types/exceptionType.ts";
+import { Poll, isPollRow } from "../types/pollType.ts";
+import { isOptionRow } from "../types/optionType.ts";
 import { errorMiddleware, entropyMiddleware } from "../middlewares/middlewareError.ts";
 import { pollRowToApi } from "../mappers/mappers.ts";
 
@@ -23,6 +23,10 @@ router.get("/", errorMiddleware, entropyMiddleware, (ctx: context) => {
        FROM polls;`,
     )
     .all();
+
+  if (!pollRows) {
+    throw new APIException(ApiErrorCode.NOT_FOUND, 404, "Polls not founds");
+  }
 
   const pollsApi: Poll[] = [];
 
@@ -57,6 +61,10 @@ router.get("/", errorMiddleware, entropyMiddleware, (ctx: context) => {
 // Obtenir un sondage unique
 router.get("/:pollId", errorMiddleware, entropyMiddleware , (ctx: context) => {
   const pollId = ctx.params.pollId;
+
+  if (!pollId) {
+    throw new APIException(ApiErrorCode.NOT_FOUND, 404, "Poll not found");
+  }
 
   const pollRow = db
     .prepare(

@@ -2,7 +2,7 @@ import { randomInt} from "node:crypto";
 
 import { Context, Next } from "@oak/oak";
 
-import { ApiErrorCode, APIException, ApiFailure } from "../types.ts";
+import { ApiErrorCode, APIException, ApiFailure } from "../types/exceptionType.ts";
 
 function delay(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));

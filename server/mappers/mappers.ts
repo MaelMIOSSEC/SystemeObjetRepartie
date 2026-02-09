@@ -7,7 +7,7 @@ import {
   VoteRow,
   PollRow,
   OptionRow,
-} from "../types.ts";
+} from "../types/exceptionType.ts";
 
 // ---------- API: Poll Management -----------------------
 

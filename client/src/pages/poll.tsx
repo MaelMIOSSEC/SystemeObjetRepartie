@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-
-import { type Poll, type Option } from "../../types.ts";
+import type { Poll } from "../../types/pollType";
+import type { Option } from "../../types/optionType";
 
 export default function Poll() {
   const { selectedPoll } = useParams();
