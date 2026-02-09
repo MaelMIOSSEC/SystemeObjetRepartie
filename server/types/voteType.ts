@@ -1,4 +1,5 @@
 import { SQLOutputValue } from "node:sqlite";
+import { ApiError } from "./exceptionType";
 
 export interface Vote {
   voteId: string;
@@ -26,4 +27,30 @@ export function isVoteRow(obj: Record<string, SQLOutputValue>): obj is VoteRow {
     "option_id" in obj &&
     typeof obj.option_id === "string"
   );
+}
+
+/**
+ * WebSockets
+ */
+
+export interface VoteCastMessage {
+  type: "vote_cast";
+  pollId: string;
+  optionId: string;
+  userId?: string;
+}
+
+export interface VoteAckMessage {
+  type: "vote_ack";
+  pollId: string;
+  optionId: string;
+  success: boolean;
+  error?: ApiError;
+}
+
+export interface VotesUpdateMessage {
+  type: "votes_update";
+  pollId: string;
+  optionId: string;
+  voteCount: number;
 }

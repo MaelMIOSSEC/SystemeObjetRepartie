@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import type { PollRow } from "../../types/pollType";
-import type { Option } from "../../types/optionType";
+import type { PollRow } from "../../types/pollType.ts";
+import type { Option } from "../../types/optionType.ts";
 
 function PollCard({ poll }: { poll: PollRow }) {
   const [isHovered, setIsHovered] = useState(false);

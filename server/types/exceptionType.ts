@@ -5,7 +5,7 @@ export enum ApiErrorCode {
   SERVER_ERROR = "SERVER_ERROR",
 }
 
-interface ApiError {
+export interface ApiError {
   code: ApiErrorCode;
   message: string;
 }

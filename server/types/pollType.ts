@@ -1,6 +1,6 @@
 import { SQLOutputValue } from "node:sqlite";
 
-import { Option } from "./optionType";
+import { Option } from "./optionType.ts";
 
 export interface Poll {
   pollId: string;
