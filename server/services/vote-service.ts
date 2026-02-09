@@ -20,7 +20,11 @@ export function subscribe(ws: WebSocket, pollId: string): void {
 }
 
 export function unsubscribe(ws: WebSocket, pollId: string): void {
+const pollSubscription = subscriptions.get(pollId);
 
+    if (pollSubscription) {
+        subscriptions.delete(pollId);
+    }
 }
 
 export function broadcast(pollId: string, message: VotesUpdateMessage): void {
