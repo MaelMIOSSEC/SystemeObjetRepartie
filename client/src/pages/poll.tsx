@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import type { Poll } from "../../types/pollType.ts";
 import type { Option } from "../../types/optionType.ts";
+import { connect, disconnect, onVoteAck, onVoteUpdate } from "../../services/vote.ts"
+import type { VoteAckMessage, VotesUpdateMessage } from "../../types/voteType.ts";
 
 export default function Poll() {
   const { selectedPoll } = useParams();
@@ -32,6 +34,43 @@ export default function Poll() {
       }
     })();
   }, [selectedPoll]);
+
+  useEffect(() => {
+    if (poll.status !== "loaded") return;
+
+    connect(poll.pollId);
+
+    return () => disconnect();
+  }, [poll]);
+
+  useEffect(() => {
+    return onVoteAck((ack: VoteAckMessage) => {
+      if (!ack.success) {
+        setVoteError(ack.error?.message || "Vote failed");
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    return onVoteUpdate((update: VotesUpdateMessage) => {
+      setPoll((prev) => {
+        if (prev.status !== "loaded") return prev;
+  
+        // On met à jour l'état local courant du sondage
+        return {
+          ...prev,
+          poll: {
+            ...prev.poll,
+            options: prev.poll.options.map((opt) =>
+              opt.id === update.optionId
+                ? { ...opt, voteCount: update.voteCount }
+                : opt
+            ),
+          },
+        };
+      });
+    });
+  }, []);
 
   if (!poll) {
     return <h1><b>Chargement du sondage...</b></h1>;
