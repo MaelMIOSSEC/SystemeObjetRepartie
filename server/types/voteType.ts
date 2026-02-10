@@ -4,7 +4,8 @@ import { ApiError } from "./exceptionType";
 export interface Vote {
   voteId: string;
   creationDate: string;
-  userId: string;
+  userId?: string;
+  pollId: string;
   optionId: string;
 }
 

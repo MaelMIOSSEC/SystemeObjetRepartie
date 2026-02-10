@@ -42,12 +42,16 @@ CREATE TABLE options (
 CREATE TABLE votes (
     `vote_id` TEXT PRIMARY KEY,
     `creation_date` TEXT NOT NULL,
-    `user_id` TEXT NOT NULL, 
+    `user_id` TEXT, 
     `option_id` TEXT NOT NULL,
+    `poll_id` TEXT NOT NULL,
     CONSTRAINT fk_user_id 
         FOREIGN KEY (user_id)
         REFERENCES users(user_id),
     CONSTRAINT fk_option_id
         FOREIGN KEY (option_id)
-        REFERENCES options(option_id)
+        REFERENCES options(option_id),
+    CONSTRAINT fk_poll_id 
+        FOREIGN KEY (poll_id)
+        REFERENCES polls(poll_id)
 );
