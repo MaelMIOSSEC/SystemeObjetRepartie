@@ -3,6 +3,7 @@ export enum ApiErrorCode {
   NOT_FOUND = "NOT_FOUND",
   BAD_REQUEST = "BAD_REQUEST",
   SERVER_ERROR = "SERVER_ERROR",
+  UNAUTHORIZED = "UNAUTHORIZED",
 }
 
 export interface ApiError {

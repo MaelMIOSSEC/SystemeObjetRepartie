@@ -185,7 +185,7 @@ router.post("/", (ctx: context) => {
     ctx.response.status = 200;
     ctx.response.body = response;
   } catch (err: any) {
-    console.error("Erreur SQL détaillée :", err.message); // Regardez votre terminal où tourne 'deno task dev'
+    console.error("Erreur SQL détaillée :", err.message);
     ctx.response.status = 500;
     ctx.response.body = { success: false, error: { message: err.message } };
   }

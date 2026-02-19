@@ -2,7 +2,9 @@ import { Router, context } from "@oak/oak";
 import { errorMiddleware } from "../middlewares/middlewareError";
 import { ApiErrorCode, APIException } from "../types/exceptionType";
 
-Router.get("/votes/:pollId", errorMiddleware, (ctx: context) => {
+const router = new Router({ prefix: "/votes" });
+
+Router.get("/:pollId", errorMiddleware, (ctx: context) => {
   const pollId = ctx.params.pollId;
 
   if (!pollId) {
