@@ -15,7 +15,6 @@ const db = new DatabaseSync("polls.db");
 
 const router = new Router({ prefix: "/users" });
 
-// Enregistrement d'un nouvel utilisateur
 router.post("/register", async (ctx: context) => {
   try {
     const name = ctx.params.name;
@@ -27,13 +26,13 @@ router.post("/register", async (ctx: context) => {
       throw new APIException(
         ApiErrorCode.UNAUTHORIZED,
         404,
-        "Missing information(s)..."
+        "Missing information(s)...",
       );
     }
 
     const insertResult = db
       .prepare(
-        "INSERT INTO users (name, last_name, password, email, role) VALUES (:name, :lastName, :password, :email, :role)"
+        "INSERT INTO users (name, last_name, password, email, role) VALUES (:name, :lastName, :password, :email, :role)",
       )
       .run({
         name: name,
@@ -62,7 +61,7 @@ router.post("/register", async (ctx: context) => {
 
     const userRow = db
       .prepare(
-        "SELECT user_id, name, last_name, password, email, role FROM users WHERE user_id = ?;"
+        "SELECT user_id, name, last_name, password, email, role FROM users WHERE user_id = ?;",
       )
       .get(newId);
 
@@ -97,7 +96,48 @@ router.post("/register", async (ctx: context) => {
 
 // Connexion utilisateur
 router.post("/login", async (ctx: context) => {
-  // À compléter...
+  try {
+    const hashedPassword = await hashPassword(ctx.params.password);
+    const email = ctx.params.email;
+
+    if (!hashedPassword || !email) {
+      throw new APIException(
+        ApiErrorCode.UNAUTHORIZED,
+        404,
+        "Missing information(s)...",
+      );
+    }
+
+    const userRow = db
+      .prepare(
+        "SELECT user_id, name, last_name, password, email, role FROM users WHERE email = ;",
+      )
+      .get(ctx.params.email);
+
+    if (!userRow || !isUserRow(userRow)) {
+      const response: ApiResponse<User> = {
+        success: false,
+        error: { code: ApiErrorCode.NOT_FOUND, message: "User not found..." },
+      };
+
+      ctx.response.status = 404;
+      ctx.response.body = response;
+
+      return;
+    }
+
+    const response: ApiResponse<User> = {
+      success: true,
+      data: userRowToApi(userRow),
+    };
+
+    ctx.response.status = 200;
+    ctx.response.body = response;
+  } catch (err: any) {
+    console.error("Erreur SQL détaillée :", err.message);
+    ctx.response.status = 500;
+    ctx.response.body = { success: false, error: { message: err.message } };
+  }
 });
 
 // Retourne les informations stockées en BDD pour l'utilisateur connecté
