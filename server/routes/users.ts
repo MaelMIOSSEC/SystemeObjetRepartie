@@ -144,5 +144,63 @@ router.post("/login", async (ctx: context) => {
 // (Liste des sondages créés, nombre de votes, etc.)
 // Les requêtes passent par le middleware d'authentification !
 router.get("/me", authMiddleware, (ctx: AuthContext) => {
-  // À compléter...
+  try {
+    const userId = ctx.state.user?.userId;
+
+    if (!userId) {
+      throw new APIException(
+        ApiErrorCode.UNAUTHORIZED,
+        401,
+        "Utilisateur non identifié dans le jeton.",
+      );
+    }
+
+    const userRow = db
+      .prepare(
+        "SELECT user_id, name, last_name, password, email, role FROM users WHERE user_id = ?;",
+      )
+      .get(userId);
+
+    if (!userRow || !isUserRow(userRow)) {
+      ctx.response.status = 404;
+      ctx.response.body = { 
+        success: false, 
+        error: { code: ApiErrorCode.NOT_FOUND, message: "Utilisateur non trouvé en base de données." } 
+      };
+      return;
+    }
+
+    // 2. Récupération des sondages créés par cet utilisateur
+    const userPolls = db
+      .prepare("SELECT * FROM polls WHERE user_id = ?;")
+      .all(userId);
+
+    // 3. Récupération du nombre total de votes effectués par l'utilisateur
+    const voteStats = db
+      .prepare("SELECT COUNT(*) as count FROM votes WHERE user_id = ?;")
+      .get(userId) as { count: number };
+
+    // Construction de la réponse en utilisant le mapper pour le format API de l'utilisateur
+    const response = {
+      success: true,
+      data: {
+        ...userRowToApi(userRow),
+        polls: userPolls,
+        stats: {
+          totalVotes: voteStats?.count || 0,
+        },
+      },
+    };
+
+    ctx.response.status = 200;
+    ctx.response.body = response;
+
+  } catch (err: any) {
+    console.error("Erreur lors de la récupération du profil :", err.message);
+    ctx.response.status = err instanceof APIException ? err.status : 500;
+    ctx.response.body = { 
+      success: false, 
+      error: { message: err.message || "Erreur interne du serveur" } 
+    };
+  }
 });

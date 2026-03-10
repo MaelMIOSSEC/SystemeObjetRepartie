@@ -5,6 +5,8 @@ import { ApiErrorCode, APIException } from "../types/exceptionType.ts";
 
 // On étend la définition du contexte d'une requête en typant la variable `state` contenant son état
 export interface AuthContext extends Context {
+  response: any;
+  request: any;
   state: AuthState;
 }
 
